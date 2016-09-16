@@ -1,6 +1,5 @@
 # ImageSlideshow
 
-[![CI Status](http://img.shields.io/travis/zvonicek/ImageSlideshow.svg?style=flat)](https://travis-ci.org/zvonicek/ImageSlideshow)
 [![Version](https://img.shields.io/cocoapods/v/ImageSlideshow.svg?style=flat)](http://cocoapods.org/pods/ImageSlideshow)
 [![License](https://img.shields.io/cocoapods/l/ImageSlideshow.svg?style=flat)](http://cocoapods.org/pods/ImageSlideshow)
 [![Platform](https://img.shields.io/cocoapods/p/ImageSlideshow.svg?style=flat)](http://cocoapods.org/pods/ImageSlideshow)
@@ -19,6 +18,7 @@ Roadmap for 1.0:
 - ~~Fix initial bugs~~
 - Polish API
 - Write brief documentation
+- Improve the example project to demonstrate all the features
 - ~~*InputSource* subclass for *Alamofire* (yay!)~~
 
 ## Usage
@@ -33,7 +33,7 @@ ImageSlideshow is available through [CocoaPods](http://cocoapods.org). To instal
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'ImageSlideshow', '~> 0.3'
+pod 'ImageSlideshow', '~> 0.5'
 ```
 
 ## Usage
@@ -42,23 +42,26 @@ You can instantiate Slideshow either in Storyboard / Interface Builder, or in co
 
 ### Loading images
 
-Images can be set by calling ```setImageInputs``` method on ```ImageSlideshow``` instance. Argument is an array of *InputSource*s. By default you may use ```ImageSource``` which takes ```UIImage```, but you can easily subclass ```InputSource``` and support your own input source. 
+Images can be set by calling ```setImageInputs``` method on ```ImageSlideshow``` instance. Argument is an array of *InputSource*s. By default you may use ```ImageSource``` which takes ```UIImage```, but you can easily subclass ```InputSource``` and support your own input source.
 
 ```swift
-slideshow.setImageInputs([ImageSource(image: UIImage(named: "myImage"))!, ImageSource(image: UIImage(named: "myImage2"))!,])
+slideshow.setImageInputs([
+  ImageSource(image: UIImage(named: "myImage"))!, 
+  ImageSource(image: UIImage(named: "myImage2"))!
+])
 ```
 
 There are two more *InputSource*s available:
 
 #### AlamofireImage
 
-*AlamofireSource* subspec allowing to load image from URL using *AlamofireImage*. To use this add the Alamofire subspec to your Podfile.
+*AlamofireSource* subspec for loading image from an URL via *AlamofireImage*. To use this add the Alamofire subspec to your Podfile.
 
 ```ruby
 pod "ImageSlideshow/Alamofire"
 ``` 
 
-It is then possible to load image from URL by calling
+An image from arbitrary URL is then loaded by *AlamofireSource* initialization.
 
 ```swift
 AlamofireSource(urlString: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Trencin_hdr_001.jpg")
@@ -66,13 +69,13 @@ AlamofireSource(urlString: "https://upload.wikimedia.org/wikipedia/commons/d/d5/
 
 #### AFNetworking
 
-*AFURL* subspec allowing to load image from URL using *AFNetworking*. To use this add the AFURL subspec to your Podfile.
+*AFURL* subspec for loading image from an URL via *AFNetworking*. To use this add the AFURL subspec to your Podfile.
 
 ```ruby
 pod "ImageSlideshow/AFURL"
 ``` 
 
-It is then possible to load image from URL by calling
+An image from arbitrary URL is then loaded by *AFURLSource* initialization.
 
 ```swift
 AFURLSource(urlString: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Trencin_hdr_001.jpg")
@@ -91,10 +94,10 @@ It is possible to configure behaviour by setting numerous properties:
 
 ### Full Screen view
 
-As seen on sample image and example project, you may also use full-scren view. For now there is a need to present the controller manually. 
+As seen on sample image and example project, you may also use full-scren view. The controller can be presented manually as seen on the example. 
 
 ```swift
-var transitionDelegate: ZoomAnimatedTransitioningDelegate?
+var slideshowTransitioningDelegate: ZoomAnimatedTransitioningDelegate?
 
 override func viewDidLoad() {
   ...
@@ -110,11 +113,11 @@ func click() {
   }
   
   // set the initial page
-  ctr.initialPage = slideshow.scrollViewPage
+  ctr.initialImageIndex = slideshow.scrollViewPage
   // set the inputs
   ctr.inputs = slideshow.images
-  self.transitionDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow);
-  ctr.transitioningDelegate = self.transitionDelegate!
+  self.slideshowTransitioningDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow, slideshowController: ctr)
+  ctr.transitioningDelegate = self.slideshowTransitioningDelegate
   self.presentViewController(ctr, animated: true, completion: nil)
 }
 ```
