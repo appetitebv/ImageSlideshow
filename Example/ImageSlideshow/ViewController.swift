@@ -10,53 +10,36 @@ import UIKit
 import ImageSlideshow
 
 class ViewController: UIViewController {
-    
+
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+
     @IBOutlet var slideshow: ImageSlideshow!
-    var transitionDelegate: ZoomAnimatedTransitioningDelegate?
-    
+  
+    let localSource = [ImageSource(imageString: "img1")!, ImageSource(imageString: "img2")!, ImageSource(imageString: "img3")!, ImageSource(imageString: "img4")!]
+    let afNetworkingSource = [AFURLSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, AFURLSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, AFURLSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
+    let alamofireSource = [AlamofireSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, AlamofireSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, AlamofireSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
+    let sdWebImageSource = [SDWebImageSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, SDWebImageSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, SDWebImageSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
+    let kingfisherSource = [KingfisherSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, KingfisherSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, KingfisherSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        slideshow.backgroundColor = UIColor.whiteColor()
-        slideshow.slideshowInterval = 5.0
-        slideshow.pageControlPosition = PageControlPosition.UnderScrollView
-        slideshow.pageControl.currentPageIndicatorTintColor = UIColor.lightGrayColor();
-        slideshow.pageControl.pageIndicatorTintColor = UIColor.blackColor();
-        
-//        Local image example
-//
-//        slideshow.setImageInputs([ImageSource(imageString: "img1")!, ImageSource(imageString: "img2")!, ImageSource(imageString: "img3")!, ImageSource(imageString: "img4")!])
-        
-        
-//        AFURLSource example
-//        
-//        slideshow.setImageInputs([AFURLSource(urlString: "https://thumbs.dreamstime.com/z/flysch-rocks-barrika-beach-sunset-58426273.jpg")!, AFURLSource(urlString: "https://thumbs.dreamstime.com/z/man-surfboard-beautiful-foggy-beach-boy-running-golden-sunrise-daytona-florida-58532550.jpg")!, AFURLSource(urlString: "https://thumbs.dreamstime.com/z/woman-putting-mask-her-face-black-cloak-sitting-ground-58291716.jpg")!])
-        
-        
-//        AlamofireSource example
-//        
-        slideshow.setImageInputs([AlamofireSource(urlString: "https://thumbs.dreamstime.com/z/flysch-rocks-barrika-beach-sunset-58426273.jpg")!, AlamofireSource(urlString: "https://thumbs.dreamstime.com/z/man-surfboard-beautiful-foggy-beach-boy-running-golden-sunrise-daytona-florida-58532550.jpg")!, AlamofireSource(urlString: "https://thumbs.dreamstime.com/z/woman-putting-mask-her-face-black-cloak-sitting-ground-58291716.jpg")!])
-        
-        let recognizer = UITapGestureRecognizer(target: self, action: "click")
-        slideshow.addGestureRecognizer(recognizer)
+
+        self.slideshow.setImageInputs(alamofireSource)
+        self.slideshow.contentScaleMode = .scaleAspectFill
+        self.slideshow.slideshowInterval = 5
+        self.slideshow.zoomEnabled = true
+        self.slideshow.pageControlPosition = .hidden
+        self.slideshow.activityIndicator = DefaultActivityIndicator(style: .whiteLarge, color: .black)
+
+        //let recognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.didTap))
+        //slideshow.addGestureRecognizer(recognizer)
     }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
-    
-    func click() {
-        let ctr = FullScreenSlideshowViewController()
-        ctr.pageSelected = {(page: Int) in
-            self.slideshow.setScrollViewPage(page, animated: false)
-        }
-        
-        ctr.initialPage = slideshow.scrollViewPage
-        ctr.inputs = slideshow.images
-        self.transitionDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow);
-        ctr.transitioningDelegate = self.transitionDelegate!
-        self.presentViewController(ctr, animated: true, completion: nil)
+
+    func didTap() {
+        let fullScreenController = slideshow.presentFullScreenController(from: self)
+        // set the activity indicator for full screen controller; skip the line if no activity indicator should be shown
+        fullScreenController.slideshow.activityIndicator = DefaultActivityIndicator(style: .white, color: nil)
     }
 }
-
