@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "ImageSlideshow"
-  s.version          = "0.31"
+  s.version          = "1.3.1"
   s.summary          = "Image slideshow written in Swift with circular scrolling, timer and full screen viewer"
 
 # This description is used to generate tags and improve search results.
@@ -24,30 +24,48 @@ Image slideshow is a Swift library providing customizable image slideshow with c
   s.screenshots     = "http://cl.ly/image/2v193I0G0h0Z/ImageSlideshow2.gif"
   s.license          = 'MIT'
   s.author           = { "Petr Zvonicek" => "zvonicek@gmail.com" }
-  s.source           = { :git => "https://github.com/appetitebv/ImageSlideshow.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/zvonicek/ImageSlideshow.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/zvonicek'
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true
 
   s.subspec 'Core' do |core|
-    core.source_files = 'Pod/Classes/Core/**/*'
+    core.source_files = 'ImageSlideshow/Classes/Core/**/*'
     core.resource_bundles = {
-        'ImageSlideshow' => ['Pod/Assets/*.png']
+        'ImageSlideshow' => ['ImageSlideshow/Assets/*.png']
     }
   end
 
-  s.subspec 'AFURL' do |afnetworking|
-    afnetworking.dependency 'ImageSlideshow/Core'
-    afnetworking.dependency 'AFNetworking', '~> 2.3'
-    afnetworking.source_files = 'Pod/Classes/InputSources/AFURLSource.swift'
+  s.subspec 'AFURL' do |subspec|
+    subspec.dependency 'ImageSlideshow/Core'
+    subspec.dependency 'AFNetworking', '~> 3.0'
+    subspec.source_files = 'ImageSlideshow/Classes/InputSources/AFURLSource.swift'
   end
 
-  s.subspec 'Alamofire' do |afnetworking|
-    afnetworking.dependency 'ImageSlideshow/Core'
-    afnetworking.dependency 'AlamofireImage', '~> 2.0'
-    afnetworking.source_files = 'Pod/Classes/InputSources/AlamofireSource.swift'
-  end  
+  s.subspec 'Alamofire' do |subspec|
+    subspec.dependency 'ImageSlideshow/Core'
+    subspec.dependency 'AlamofireImage', '~> 3.0'
+    subspec.source_files = 'ImageSlideshow/Classes/InputSources/AlamofireSource.swift'
+  end
+
+  s.subspec 'SDWebImage' do |subspec|
+    subspec.dependency 'ImageSlideshow/Core'
+    subspec.dependency 'SDWebImage', '~> 3.7'
+    subspec.source_files = 'ImageSlideshow/Classes/InputSources/SDWebImageSource.swift'
+  end
+
+  s.subspec 'Kingfisher' do |subspec|
+    subspec.dependency 'ImageSlideshow/Core'
+    subspec.dependency 'Kingfisher', '~> 3.0'
+    subspec.source_files = 'ImageSlideshow/Classes/InputSources/KingfisherSource.swift'
+  end
+
+  s.subspec 'Parse' do |subspec|
+    subspec.dependency 'ImageSlideshow/Core'
+    subspec.dependency 'Parse', '~> 1.14'
+    subspec.source_files = 'ImageSlideshow/Classes/InputSources/ParseSource.swift'
+  end
 
   s.default_subspec = 'Core'
 
